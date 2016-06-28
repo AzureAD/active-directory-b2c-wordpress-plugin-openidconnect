@@ -54,21 +54,13 @@ function b2c_verify_token() {
 		if ($action == "generic") $policy = $generic_policy;
 		if ($action == "admin") $policy = $admin_policy;
 		if ($action == "edit_profile") $policy = $edit_profile_policy;
-	
-		// Check the response type
-		if (isset($_POST['code'])) {
-			$resp = $_POST['code'];
-			$resp_type = "code";
-		}
-		else if (isset($_POST['id_token'])) {
-			$resp = $_POST['id_token'];
-			$resp_type = "id_token";
-		}
 		
-		// Verify token
-		$tokenChecker = new TokenChecker($resp, $resp_type, $clientID, $client_secret, $policy);
-		$verified = $tokenChecker->authenticate();
-		if ($verified == false) wp_die('Token validation error');
+		// Verify token, if the checkbox is checked
+		if ($verify_tokens) {
+			$tokenChecker = new TokenChecker($_POST['id_token'], $clientID, $policy);
+			$verified = $tokenChecker->authenticate();
+			if ($verified == false) wp_die('Token validation error');
+		}
 		
 		// Use the email claim to fetch the user object from the WP database
 		$email = $tokenChecker->getClaim("emails");

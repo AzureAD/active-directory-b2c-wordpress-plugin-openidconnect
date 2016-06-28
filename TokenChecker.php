@@ -12,42 +12,13 @@ class TokenChecker {
 	private $head = "";
 	private $payload = "";
 	private $clientID = "";
-	private $client_secret = "";
 	private $endpointHandler; 
 	
-	function __construct($resp, $resp_type, $clientID, $client_secret, $policy_name) {
+	function __construct($id_token, $clientID, $policy_name) {
 		
 		$this->clientID = $clientID;
-		$this->client_secret = $client_secret;
 		$this->endpointHandler = new EndpointHandler($policy_name);
-		
-		if ($resp_type == "id_token") $id_token = $resp;
-		else $id_token = $this->getTokenFromCode($resp);
-		
 		$this->splitIdToken($id_token);
-	}
-	
-	// Given an authorization code, fetches the id_token from the token endpoint
-	private function getTokenFromCode($code) {
-		
-		require "settings.php";
-		$post_fields = array(
-									'client_id' => urlencode($this->clientID),
-									'client_secret' => urlencode($this->client_secret),
-									'code' => urlencode($code),
-									'scope' => urlencode($scope),
-									'redirect_uri' => urlencode($redirect_uri),
-									'grant_type' => urlencode("authorization_code")
-				);
-				
-				// Get Token Endpoint
-				$token_endpoint = $this->endpointHandler->getTokenEndpoint();
-				
-				// Execute post and get id token 
-				$result = $this->endpointHandler->postEndpointData($token_endpoint, $post_fields);
-				$id_token = getClaim("id_token", $result);
-				return $id_token;
-		
 	}
 	
 	// Converts base64url encoded string into base64 encoded string
@@ -108,7 +79,7 @@ class TokenChecker {
 		return $verified;	
 	}
 	
-	// Validate audience, not_before, expiration_time, and issuer claims
+	// Validates audience, not_before, expiration_time, and issuer claims
 	private function validateClaims() {
 		
 		$audience = getClaim("aud", $this->payload); // Should be app's clientID

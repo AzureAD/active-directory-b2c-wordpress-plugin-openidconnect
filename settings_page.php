@@ -73,7 +73,7 @@ class settings_page
 
         add_settings_field(
             'b2c_aad_tenant', 
-            "Your blog's AAD tenant name", 
+            "Your app's AAD tenant name", 
             array( $this, 'b2c_aad_tenant_callback' ), 
             'b2c-settings-page', 
             'service_config_section'
@@ -81,7 +81,7 @@ class settings_page
 
         add_settings_field(
             'b2c_client_id', // ID
-            "Your blog's AAD client ID", // Title 
+            "Your app's AAD client ID", // Title 
             array( $this, 'b2c_client_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -89,7 +89,7 @@ class settings_page
 
         add_settings_field(
             'b2c_subscriber_policy_id', // ID
-            "Your blog's user login policy", // Title 
+            "Your app's user login policy", // Title 
             array( $this, 'b2c_subscriber_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -97,7 +97,7 @@ class settings_page
 
         add_settings_field(
             'b2c_admin_policy_id', // ID
-            "Your blog's admin login policy", // Title 
+            "Your app's admin login policy", // Title 
             array( $this, 'b2c_admin_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -105,11 +105,19 @@ class settings_page
 
         add_settings_field(
             'b2c_edit_profile_policy_id', // ID
-            "Your blog's edit profile policy", // Title 
+            "Your app's edit profile policy", // Title 
             array( $this, 'b2c_edit_profile_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
-        );      
+        );
+		
+		add_settings_field(
+            'b2c_verify_tokens', // ID
+            "Verify ID Tokens", // Title 
+            array( $this, 'b2c_verify_tokens_callback' ), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section           
+        );     		
     }
 
     /**
@@ -134,6 +142,8 @@ class settings_page
 
         if( isset( $input['b2c_edit_profile_policy_id'] ) )
             $new_input['b2c_edit_profile_policy_id'] = sanitize_text_field(strtolower( $input['b2c_edit_profile_policy_id'] ));
+		
+        $new_input['b2c_verify_tokens'] = $input['b2c_verify_tokens'];
 
         return $new_input;
     }
@@ -199,6 +209,20 @@ class settings_page
             '<input type="text" id="b2c_edit_profile_policy_id" name="b2c_config_elements[b2c_edit_profile_policy_id]" value="%s" />',
             isset( $this->options['b2c_edit_profile_policy_id'] ) ? esc_attr( $this->options['b2c_edit_profile_policy_id']) : ''
         );
+    }
+	
+	/** 
+     * Get the settings option array and print one of its values
+     */
+    public function b2c_verify_tokens_callback()
+    {
+		
+		if (empty($this->options['b2c_verify_tokens']))
+            $this->options['b2c_verify_tokens'] = 0;
+        
+        $current_value = $this->options['b2c_verify_tokens'];
+        
+        echo '<input type="checkbox" id="b2c_verify_tokens" name="b2c_config_elements[b2c_verify_tokens]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
     }
 }
 

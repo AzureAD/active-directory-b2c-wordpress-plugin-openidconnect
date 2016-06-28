@@ -20,11 +20,12 @@
 	// App settings and policies
 	$tenant = $config_elements['b2c_aad_tenant'];
 	$clientID = $config_elements['b2c_client_id'];
-	$client_secret = $config_elements['b2c_client_secret'];
 	$generic_policy = $config_elements['b2c_subscriber_policy_id'];
 	$admin_policy = $config_elements['b2c_admin_policy_id'];
 	$edit_profile_policy = $config_elements['b2c_edit_profile_policy_id'];
 	$redirect_uri = urlencode(homePageURL()); 
+	if ($config_elements['b2c_verify_tokens']) $verify_tokens = 1;
+	else $verify_tokens = 0;
 
 	// Authentication Flow
 	$response_type = "id_token"; // either id_token or code, depending on whether your application has enabled/disabled implicit flow
