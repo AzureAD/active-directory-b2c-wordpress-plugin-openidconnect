@@ -4,7 +4,8 @@ require_once "phpseclib/Crypt/RSA.php";
 require_once "EndpointHandler.php";
 require_once "settings.php";
 	
-// A class to verify an id_token, following implicit flow
+// A class to verify an id_token, following the implicit flow
+// defined by the OpenID Connect standard
 class TokenChecker {
 	
 	// Class variables
@@ -86,8 +87,8 @@ class TokenChecker {
 		if ($audience != $this->clientID) return false;
 		
 		$cur_time = time();
-		$not_before = getClaim("nbf", $this->payload, false); // epoch time, time after which token is valid (so basically nbf < cur time < exp)
-		$expiration = getClaim("exp", $this->payload, false); // epoch time, check that the token is still valid
+		$not_before = getClaim("nbf", $this->payload); // epoch time, time after which token is valid (so basically nbf < cur time < exp)
+		$expiration = getClaim("exp", $this->payload); // epoch time, check that the token is still valid
 		if ($not_before > $cur_time) return false;
 		if ($cur_time > $expiration) return false;
 		
@@ -112,6 +113,7 @@ class TokenChecker {
 		return getClaim($name, $this->payload);
 	}
 	
+	// Returns the end session (aka logout) url
 	public function getEndSessionEndpoint() {
 		return $this->endpointHandler->getEndSessionEndpoint();
 	}

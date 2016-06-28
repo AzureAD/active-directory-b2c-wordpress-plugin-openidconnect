@@ -1,7 +1,5 @@
 <?php
 
-	// Parses the settings entered in by the admin on the b2c settings page
-
 	// Gets URL of homepage
 	function homePageURL() {
 		$pageURL = 'http';
@@ -17,7 +15,7 @@
 	// Get the inputs from the B2C Settings Page
 	$config_elements = get_option('b2c_config_elements');
 	
-	// App settings and policies
+	// Parse the settings entered in by the admin on the b2c settings page
 	$tenant = $config_elements['b2c_aad_tenant'];
 	$clientID = $config_elements['b2c_client_id'];
 	$generic_policy = $config_elements['b2c_subscriber_policy_id'];
@@ -27,9 +25,10 @@
 	if ($config_elements['b2c_verify_tokens']) $verify_tokens = 1;
 	else $verify_tokens = 0;
 
-	// Authentication Flow
+	// These settings define the authentication flow, but are not configurable on the settings page
+	// because this plugin is made to support OpenID Connect implicit flow with form post responses
 	$response_type = "id_token"; // either id_token or code, depending on whether your application has enabled/disabled implicit flow
-	$response_mode = "form_post"; // can also be query_string or fragment, but this code works with form_post
+	$response_mode = "form_post"; // can also be query_string or fragment, but this code only supports form_post
 	$scope = "openid"; // currently, just openid supported
 	
 	///////////////////////////////////////////////////////////////////////////////

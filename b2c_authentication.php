@@ -16,6 +16,7 @@ error_reporting(E_ALL);
 // Adds the b2c options page for the admin
 require_once 'settings_page.php';
 
+// On user login, redirects to B2C
 function b2c_login() {
 	
 	require_once 'settings.php';
@@ -28,6 +29,7 @@ function b2c_login() {
 	exit;
 }
 
+// On user logout, redirects to B2C
 function b2c_logout() {
 	
 	require_once 'settings.php';
@@ -40,10 +42,13 @@ function b2c_logout() {
 	exit;
 }
 
+// Verifies the id_token that is POSTed back to the web app from the B2C authorization endpoint
 function b2c_verify_token() {
 	
+	// If and only if ID token is POSTed to the /b2c-token-verification path, 
+	// proceeds with verifying the ID token. The path check ensures that other plugins
+	// which may POST id tokens do not conflict with this plugin.
 	$pagename = $_SERVER['REQUEST_URI'];
-	
 	if ($pagename == '/b2c-token-verification' && isset($_POST['id_token'])) {
 		
 		require_once 'settings.php';
@@ -55,7 +60,7 @@ function b2c_verify_token() {
 		if ($action == "admin") $policy = $admin_policy;
 		if ($action == "edit_profile") $policy = $edit_profile_policy;
 		
-		// Verify token, but only if the checkbox is checked
+		// Verifies token only if the checkbox "Verify tokens" is checked on the settings page
 		$tokenChecker = new TokenChecker($_POST['id_token'], $clientID, $policy);
 		if ($verify_tokens) {
 			$verified = $tokenChecker->authenticate();
@@ -64,6 +69,7 @@ function b2c_verify_token() {
 		
 		// Use the email claim to fetch the user object from the WP database
 		$email = $tokenChecker->getClaim("emails");
+		$email = $email[0];
 		$user = WP_User::get_data_by("email", $email);
 		
 		// Get the userID for the user
@@ -126,11 +132,11 @@ function b2c_verify_token() {
 	}
 }
 
+// When user edits their profile, redirects to B2C's edit profile policy
 function b2c_edit_profile() {
 	
-	$pagename = $_SERVER['REQUEST_URI'];
-	
 	// Check to see if user was requesting the edit_profile page, if so redirect to B2C
+	$pagename = $_SERVER['REQUEST_URI'];
 	if ($pagename == '/wp-admin/profile.php') {
 		
 		require_once 'settings.php';
@@ -144,15 +150,21 @@ function b2c_edit_profile() {
 	}
 }
 
+// This hooks onto the WP login action.
 // When user logs in on WordPress, this redirects to B2C's authorization endpoint
 add_action('wp_authenticate', 'b2c_login');
 
+// This hooks onto the WP page load action. WP doesn't have an edit profile hook,
+// so this checks if the path requested in for profile edit.
 // When user request to edit their profile, redirect to B2C's edit profile endpoint
 add_action('wp_loaded', 'b2c_edit_profile');
 
-// When B2C redirects back to WordPress site, this checks the response and verifies the token
+// This hooks onto the WP page load action. When B2C redirects back to WordPress site,
+// if an ID token is POSTed to a special path, b2c-token-verification, this verifies 
+// the ID token and authenticates the user.
 add_action('wp_loaded', 'b2c_verify_token');
 
+// This hooks onto the WP logout action.
 // When a user logs out of WordPress, this redirects to B2C's logout endpoint
 add_action('wp_logout', 'b2c_logout');
 ?>

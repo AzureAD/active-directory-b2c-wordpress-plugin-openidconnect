@@ -2,17 +2,14 @@
 
 require "settings.php";
 
-// Obtains and returns the value of a claim 
-// $claim is the name of the claim to be read
-// $data is the text to fetch the claim & value from
-// $respIsString is whether or not the needed value is surrounded by quotes ""
-function getClaim($claim, $data, $respIsString = true) {
-		$value_array = array();
-		if ($respIsString) preg_match('/.+"'.$claim.'":\W*"([^"]+)/', $data, $value_array);
-		else preg_match('/.+"'.$claim.'":\W*([^,]+)/', $data, $value_array);
-		return $value_array[1];
+// Decodes the data array and returns the value of "claim"
+function getClaim($claim, $data) {
+	
+	$data_array = json_decode($data, true);
+	return $data_array[$claim];
 }
 
+// A class to handle both fetching and sending data to the various endpoints
 class EndpointHandler {
 	
 	private $metadata = "";
@@ -21,6 +18,7 @@ class EndpointHandler {
 		$this->getMetadata($policy_name);
 	}
 	
+	// 
 	public function getEndpointData($uri) {
 
 		$ch = curl_init($uri);
@@ -32,6 +30,7 @@ class EndpointHandler {
 	}
 	
 	public function postEndpointData($uri, $fields) {
+		
 		//url-ify the data for the POST
 		$fields_string = "";
 		foreach ($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
