@@ -1,4 +1,6 @@
 <?php
+
+// A class to create and manage the admin's B2C settings page
 class settings_page
 {
     /**
@@ -16,24 +18,23 @@ class settings_page
     }
 
     /**
-     * Add options page
+     * Adds a B2C options page under "Settings"
      */
     public function add_plugin_page()
     {
-        // This page will be under "Settings"
         add_options_page(
             'Settings Admin', 
             'B2C Authentication Settings', 
             'manage_options', 
             'b2c-settings-page', 
-            array( $this, 'create_admin_page' )
+            array( $this, 'create_B2C_page' )
         );
     }
 
     /**
-     * Options page callback
+     * B2C Options page callback
      */
-    public function create_admin_page()
+    public function create_B2C_page()
     {
         // Set class property
         $this->options = get_option( 'b2c_config_elements' );
@@ -54,7 +55,7 @@ class settings_page
     }
 
     /**
-     * Register and add settings
+     * Register the B2C options page and add the B2C settings boxes
      */
     public function page_init()
     {        
@@ -72,11 +73,11 @@ class settings_page
         );  
 
         add_settings_field(
-            'b2c_aad_tenant', 
-            "Your app's AAD tenant name", 
-            array( $this, 'b2c_aad_tenant_callback' ), 
-            'b2c-settings-page', 
-            'service_config_section'
+            'b2c_aad_tenant', // ID
+            "Your app's AAD tenant name", // Title 
+            array( $this, 'b2c_aad_tenant_callback' ), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section  
         );      
 
         add_settings_field(
@@ -226,6 +227,7 @@ class settings_page
     }
 }
 
+// Add the B2C Options page to the Admin dashboard, under 'Settings'
 if (is_admin()) $settings_page = new settings_page();
 
 ?>
