@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: b2c_authentication
- * Plugin URI: github.com
+ * Plugin URI: https://github.com/AzureAD/active-directory-b2c-wordpress-plugin-openidconnect
  * Description: A plugin that allows users to log in using B2C policies
  * Version: 1.0
  * Author: Olena Huang

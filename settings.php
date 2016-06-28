@@ -2,8 +2,8 @@
 
 	// Parses the settings entered in by the admin on the b2c settings page
 
-	// Gets URL of current page
-	function curPageURL() {
+	// Gets URL of homepage
+	function homePageURL() {
 		$pageURL = 'http';
 		if (isset($_SERVER["HTTPS"])) 
 			$pageURL .= "s";
@@ -14,6 +14,7 @@
 		return $pageURL;
 	}
 
+	// Get the inputs from the B2C Settings Page
 	$config_elements = get_option('b2c_config_elements');
 	
 	// App settings and policies
@@ -23,7 +24,7 @@
 	$generic_policy = $config_elements['b2c_subscriber_policy_id'];
 	$admin_policy = $config_elements['b2c_admin_policy_id'];
 	$edit_profile_policy = $config_elements['b2c_edit_profile_policy_id'];
-	$redirect_uri = urlencode('https://olenasblog.azurewebsites.net/'); 
+	$redirect_uri = urlencode(homePageURL()); 
 
 	// Authentication Flow
 	$response_type = "id_token"; // either id_token or code, depending on whether your application has enabled/disabled implicit flow

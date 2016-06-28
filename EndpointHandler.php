@@ -65,7 +65,7 @@ class EndpointHandler {
 		$authorization_endpoint = getClaim("authorization_endpoint", $this->metadata).
 											'&response_type='.$response_type.
 											'&client_id='.$clientID.
-											'&redirect_uri='.$redirect_uri.'b2c-token-verification'.
+											'&redirect_uri='.$redirect_uri.'/b2c-token-verification'.
 											'&response_mode='.$response_mode.
 											'&scope='.$scope;
 		return $authorization_endpoint;

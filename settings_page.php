@@ -88,14 +88,6 @@ class settings_page
         );      
 
         add_settings_field(
-            'b2c_client_secret', // ID
-            "Your blog's AAD client secret", // Title 
-            array( $this, 'b2c_client_secret_callback' ), // Callback
-            'b2c-settings-page', // Page
-            'service_config_section' // Section           
-        );      
-
-        add_settings_field(
             'b2c_subscriber_policy_id', // ID
             "Your blog's user login policy", // Title 
             array( $this, 'b2c_subscriber_policy_id_callback' ), // Callback
@@ -133,9 +125,6 @@ class settings_page
 		
         if( isset( $input['b2c_client_id'] ) )
             $new_input['b2c_client_id'] = sanitize_text_field( $input['b2c_client_id'] );
-
-        if( isset( $input['b2c_client_secret'] ) )
-            $new_input['b2c_client_secret'] = sanitize_text_field( $input['b2c_client_secret'] );
 
         if( isset( $input['b2c_subscriber_policy_id'] ) )
             $new_input['b2c_subscriber_policy_id'] = sanitize_text_field(strtolower( $input['b2c_subscriber_policy_id'] ));
@@ -176,17 +165,6 @@ class settings_page
         printf(
             '<input type="text" id="b2c_client_id" name="b2c_config_elements[b2c_client_id]" value="%s" />',
             isset( $this->options['b2c_client_id'] ) ? esc_attr( $this->options['b2c_client_id']) : ''
-        );
-    }
-
-    /** 
-     * Get the settings option array and print one of its values
-     */
-    public function b2c_client_secret_callback()
-    {
-        printf(
-            '<input type="text" id="b2c_client_secret" name="b2c_config_elements[b2c_client_secret]" value="%s" />',
-            isset( $this->options['b2c_client_secret'] ) ? esc_attr( $this->options['b2c_client_secret']) : ''
         );
     }
 
