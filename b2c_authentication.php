@@ -55,9 +55,9 @@ function b2c_verify_token() {
 		if ($action == "admin") $policy = $admin_policy;
 		if ($action == "edit_profile") $policy = $edit_profile_policy;
 		
-		// Verify token, if the checkbox is checked
+		// Verify token, but only if the checkbox is checked
+		$tokenChecker = new TokenChecker($_POST['id_token'], $clientID, $policy);
 		if ($verify_tokens) {
-			$tokenChecker = new TokenChecker($_POST['id_token'], $clientID, $policy);
 			$verified = $tokenChecker->authenticate();
 			if ($verified == false) wp_die('Token validation error');
 		}
