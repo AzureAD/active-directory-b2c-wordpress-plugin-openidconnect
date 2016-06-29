@@ -4,12 +4,12 @@ This repo contains the code for a WordPress plugin that allows users to authenti
 A live version of a WordPress site with this plugin installed is available here: https://olenasblog.azurewebsites.net/ 
 
 ## Pre-requisites
-+ Install WordPress [(download link)](https://codex.wordpress.org/Installing_WordPress) 
-+ Optional: Deploy your WordPress site to Azure [(instructions)](https://azure.microsoft.com/en-us/documentation/articles/app-service-web-create-web-app-from-marketplace/)
++ Install WordPress ([download link](https://codex.wordpress.org/Installing_WordPress))
++ Optional: Deploy your WordPress site to Azure ([instructions](https://azure.microsoft.com/en-us/documentation/articles/app-service-web-create-web-app-from-marketplace/))
 
 ## Use the Azure Portal to Create B2C Policies
-+ Create a sign-in/sign-up policy.
-+ Optional: Create a different admin sign-in policy, and create an edit profile policy.
++ Create a sign-in/sign-up policy and an edit profile policy.
++ Optional: Create a different sign-in policy for admins.
 + For detailed instructions, see [here](https://azure.microsoft.com/en-us/documentation/articles/active-directory-b2c-reference-policies/).
 
 ## Downloading and Installing this Plugin
