@@ -66,13 +66,21 @@ class EndpointHandler {
 	// Returns the value of the jwks_uri claim from the metadata
 	public function getJwksUri() {
 		$jwks_uri = getClaim("jwks_uri", $this->metadata);
+		
+		// Cast to array if not an array
+		$jwks_uri = is_array($jwks_uri) ? $jwks_uri : array($jwks_uri);
 		return $jwks_uri;	
 	}
 	
 	// Returns the data at the jwks_uri page
 	public function getJwksUriData() {
 		$jwks_uri = $this->getJwksUri();
-		$key_data = $this->getEndpointData($jwks_uri);
+		
+		$key_data = array();
+		foreach ($jwks_uri as $uri) {
+			array_push($key_data, $this->getEndpointData($uri));	
+		}
+		
 		return $key_data;
 	}
 	
