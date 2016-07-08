@@ -3,6 +3,7 @@
 require_once "phpseclib/Crypt/RSA.php";
 require_once "EndpointHandler.php";
 require_once "settings.php";
+
 	
 // A class to verify an id_token, following the implicit flow
 // defined by the OpenID Connect standard
@@ -24,7 +25,7 @@ class TokenChecker {
 	
 	// Converts base64url encoded string into base64 encoded string
 	// Also adds the necessary padding to the base64 encoded string
-	private function convert_base64url_to_base64($input) {
+	private function convert_base64url_to_base64($data) {
 		return str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT);
 	}
 	
@@ -43,17 +44,24 @@ class TokenChecker {
 		// Get kid from header
 		$kid = getClaim("kid", $this->head);
 		
-		// Get public key and verify for key for each JWKS URI
+		// For each JwksURI, get the public key and verify the signature
 		$key_datas = $this->endpointHandler->getJwksUriData();
 		foreach ($key_datas as $key_data) {
 			
-			// Extract e and n from the public key
-			$e = (json_decode($key_data)[$kid])['e'];
-			$n = (json_decode($key_data)[$kid])['n'];
+			// Iterate through each key type until the one that matches the "kid" is found
+			$keys = json_decode($key_data, true)["keys"];
+			foreach ($keys as $key) {
+				
+				if ($key["kid"] == $kid) {
+					$e = $key["e"];
+					$n = $key["n"];
+					break; 
+				}
+			}
 			
 			// 'e' and 'n' are base64 URL encoded, change to just base64 encoding
-			$e = $this->convert_base64url_to_base64($e_array[1]);
-			$n = $this->convert_base64url_to_base64($n_array[1]);
+			$e = $this->convert_base64url_to_base64($e);
+			$n = $this->convert_base64url_to_base64($n);
 
 			// Convert RSA(e,n) format to PEM format
 			$rsa = new Crypt_RSA();
@@ -63,15 +71,11 @@ class TokenChecker {
 				</RSAKeyValue>');
 			$public_key = $rsa->getPublicKey();
 			
-			// Get hastype
-			$alg = getClaim("alg", $this->head);
-			$hashtype = 'sha' . substr($alg, 2);
-			
-			// Verify Signature
-			$to_verify_data = $this->head . "." . $this->payload;
+			// Construct data and signature for verification
+			$to_verify_data = $this->id_token_array[0] . "." . $this->id_token_array[1];
 			$to_verify_sig = base64_decode($this->convert_base64url_to_base64(($this->id_token_array[2])));
 			
-			// Get hash type
+			// Get hash type for verification
 			$alg = getClaim("alg", $this->head);
 			switch($alg)  {
 				case 'RS256':
@@ -85,14 +89,12 @@ class TokenChecker {
 				default: 
 					// Hash type not supported
 					return false;
-				
 			}
 			
 			if (!$verified) return false;
-			
 		}
 		
-		return true;	
+		return true; // verified successfully
 	}
 	
 	// Validates audience, not_before, expiration_time, and issuer claims
