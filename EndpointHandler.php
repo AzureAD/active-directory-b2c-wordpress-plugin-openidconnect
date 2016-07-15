@@ -1,7 +1,5 @@
 <?php
 
-require "settings.php";
-
 // Decodes the data array and returns the value of "claim"
 function getClaim($claim, $data) {
 	
@@ -12,7 +10,7 @@ function getClaim($claim, $data) {
 // A class to handle both fetching and sending data to the various endpoints
 class EndpointHandler {
 	
-	private $metadata = "";
+	public $metadata = "";
 	
 	public function __construct($policy_name) {
 		$this->getMetadata($policy_name);
@@ -24,26 +22,6 @@ class EndpointHandler {
 		$ch = curl_init($uri);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		$resp = curl_exec($ch);
-		curl_close($ch);
-		return $resp;
-	}
-	
-	// Using a HTTP POST request, sends data to the endpoint and receives the response
-	public function postEndpointData($uri, $fields) {
-		
-		//url-ify the data for the POST
-		$fields_string = "";
-		foreach ($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
-		$fields_string = rtrim($fields_string, '&');
-					
-		$ch = curl_init();
-		curl_setopt($ch,CURLOPT_URL, $uri);
-		curl_setopt($ch,CURLOPT_POST, sizeof($fields));
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
 		$resp = curl_exec($ch);
 		curl_close($ch);
 		return $resp;
