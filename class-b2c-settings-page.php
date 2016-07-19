@@ -1,7 +1,9 @@
 <?php
 
-// A class to create and manage the admin's B2C settings page
-class settings_page
+/**
+ * A class to create and manage the admin's B2C settings page.
+ */
+class B2C_Settings_Page
 {
     /**
      * Holds the values to be used in the fields callbacks
@@ -74,7 +76,7 @@ class settings_page
 
         add_settings_field(
             'b2c_aad_tenant', // ID
-            "Your app's AAD tenant name", // Title 
+            'Your app\'s AAD tenant name', // Title 
             array( $this, 'b2c_aad_tenant_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section  
@@ -82,7 +84,7 @@ class settings_page
 
         add_settings_field(
             'b2c_client_id', // ID
-            "Your app's AAD client ID", // Title 
+            'Your app\'s AAD client ID', // Title 
             array( $this, 'b2c_client_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -90,7 +92,7 @@ class settings_page
 
         add_settings_field(
             'b2c_subscriber_policy_id', // ID
-            "Your app's user login policy", // Title 
+            'Your app\'s user login policy', // Title 
             array( $this, 'b2c_subscriber_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -98,7 +100,7 @@ class settings_page
 
         add_settings_field(
             'b2c_admin_policy_id', // ID
-            "Your app's admin login policy", // Title 
+            'Your app\'s admin login policy', // Title 
             array( $this, 'b2c_admin_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -106,7 +108,7 @@ class settings_page
 
         add_settings_field(
             'b2c_edit_profile_policy_id', // ID
-            "Your app's edit profile policy", // Title 
+            'Your app\'s edit profile policy', // Title 
             array( $this, 'b2c_edit_profile_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -114,7 +116,7 @@ class settings_page
 		
 		add_settings_field(
             'b2c_verify_tokens', // ID
-            "Verify ID Tokens", // Title 
+            'Verify ID Tokens', // Title 
             array( $this, 'b2c_verify_tokens_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -226,8 +228,3 @@ class settings_page
         echo '<input type="checkbox" id="b2c_verify_tokens" name="b2c_config_elements[b2c_verify_tokens]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
     }
 }
-
-// Add the B2C Options page to the Admin dashboard, under 'Settings'
-if (is_admin()) $settings_page = new settings_page();
-
-?>
