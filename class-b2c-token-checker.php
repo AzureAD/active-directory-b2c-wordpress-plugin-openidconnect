@@ -35,7 +35,7 @@ class B2C_Token_Checker {
 	private function split_id_token($id_token) {
 
 		// Split the token into Header, Payload, and Signature, and decode
-		$this->id_token_array = explode('.', $id_token);
+		$this->id_token_array = explode('.', $id_token, 3);
 		$this->head = json_decode(base64_decode($this->id_token_array[0]), true);
 		$this->payload = json_decode(base64_decode($this->id_token_array[1]), true);
 	}

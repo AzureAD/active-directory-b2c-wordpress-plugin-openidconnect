@@ -8,7 +8,8 @@ class B2C_Endpoint_Handler {
 	private $metadata = array();
 	
 	public function __construct($policy_name) {
-		$this->load_metadata($policy_name);
+		//$this->load_metadata($policy_name);
+		$this->metadata = $this->load_metadata($policy_name);
 	}
 	
 	/** 
@@ -19,7 +20,8 @@ class B2C_Endpoint_Handler {
 		
 		$metadata_endpoint = B2C_Settings::metadata_endpoint_begin() . $policy_name;
 		$response = wp_remote_get($metadata_endpoint);
-		$this->metadata = json_decode($response['body'], true);
+		//$this->metadata = json_decode($response['body'], true);
+		return json_decode($response['body'], true);
 	}
 	
 	/** 
