@@ -21,10 +21,8 @@ require 'autoload.php';
 require 'vendor/autoload.php';
 
 /**
- * Defines the B2C Page Path, which is the location the ID_token should be posted to.
- * Also defines the response string posted by B2C.
+ * Defines the response string posted by B2C.
  */
-define('B2C_PAGE_PATH', '/b2c-token-verification');
 define('B2C_RESPONSE_MODE', 'id_token');
 
 // Adds the B2C Options page to the Admin dashboard, under 'Settings'.
