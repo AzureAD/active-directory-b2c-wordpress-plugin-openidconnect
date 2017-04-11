@@ -17,18 +17,6 @@ class B2C_Settings {
 	public static $response_mode = "form_post"; 
 	public static $scope = "openid"; 
 	
-	// Gets URL of homepage
-	function home_page_url() {
-		$pageURL = 'http';
-		if (isset($_SERVER["HTTPS"])) 
-			$pageURL .= "s";
-			
-		$pageURL .= "://";
-		$pageURL .= $_SERVER["SERVER_NAME"];
-
-		return $pageURL;
-	}
-	
 	function __construct() {
 			
 		// Get the inputs from the B2C Settings Page
@@ -42,7 +30,7 @@ class B2C_Settings {
 			self::$generic_policy = $config_elements['b2c_subscriber_policy_id'];
 			self::$admin_policy = $config_elements['b2c_admin_policy_id'];
 			self::$edit_profile_policy = $config_elements['b2c_edit_profile_policy_id'];
-			self::$redirect_uri = urlencode($this->home_page_url()); 
+			self::$redirect_uri = urlencode(site_url().'/'); 
 			if ($config_elements['b2c_verify_tokens']) self::$verify_tokens = 1;
 			else self::$verify_tokens = 0;
 		}
@@ -51,7 +39,7 @@ class B2C_Settings {
 	static function metadata_endpoint_begin() {
 		return 'https://login.microsoftonline.com/'.
 				self::$tenant.
-				'.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=';
+				'/v2.0/.well-known/openid-configuration?p=';
 	}
 }
 

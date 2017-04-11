@@ -43,7 +43,7 @@ class B2C_Settings_Page
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2>B2C Service Configuration Settings</h2>           
+            <h2>Azure AD B2C Settings</h2>           
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
@@ -69,14 +69,14 @@ class B2C_Settings_Page
 
         add_settings_section(
             'service_config_section', // ID
-            'B2C Custom Settings', // Title
+            'Settings', // Title
             array( $this, 'print_section_info' ), // Callback
             'b2c-settings-page' // Page
         );  
 
         add_settings_field(
             'b2c_aad_tenant', // ID
-            'Your app\'s AAD tenant name', // Title 
+            'Tenant Name / Tenant ID', // Title 
             array( $this, 'b2c_aad_tenant_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section  
@@ -84,7 +84,7 @@ class B2C_Settings_Page
 
         add_settings_field(
             'b2c_client_id', // ID
-            'Your app\'s AAD client ID', // Title 
+            'Client ID (Application ID)', // Title 
             array( $this, 'b2c_client_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -92,7 +92,7 @@ class B2C_Settings_Page
 
         add_settings_field(
             'b2c_subscriber_policy_id', // ID
-            'Your app\'s user login policy', // Title 
+            'Sign-in Policy for Users', // Title 
             array( $this, 'b2c_subscriber_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -100,7 +100,7 @@ class B2C_Settings_Page
 
         add_settings_field(
             'b2c_admin_policy_id', // ID
-            'Your app\'s admin login policy', // Title 
+            'Sign-in Policy for Admins', // Title 
             array( $this, 'b2c_admin_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -108,7 +108,7 @@ class B2C_Settings_Page
 
         add_settings_field(
             'b2c_edit_profile_policy_id', // ID
-            'Your app\'s edit profile policy', // Title 
+            'Edit Profile Policy', // Title 
             array( $this, 'b2c_edit_profile_policy_id_callback' ), // Callback
             'b2c-settings-page', // Page
             'service_config_section' // Section           
@@ -156,7 +156,7 @@ class B2C_Settings_Page
      */
     public function print_section_info()
     {
-        print 'Enter the settings your created for your blog in the azure portal (https://portal.azure.com)';
+        print 'Enter the settings your created for your blog in the <a href="https://portal.azure.com" target="_blank">Azure Portal</a>';
     }
 	
 	/** 
@@ -165,7 +165,8 @@ class B2C_Settings_Page
     public function b2c_aad_tenant_callback()
     {
         printf(
-            '<input type="text" id="b2c_aad_tenant" name="b2c_config_elements[b2c_aad_tenant]" value="%s" />',
+            '<input type="text" id="b2c_aad_tenant" name="b2c_config_elements[b2c_aad_tenant]" value="%s" />' 
+            . '<br/><i>i.e. contoso.onmicrosoft.com</i>',
             isset( $this->options['b2c_aad_tenant'] ) ? esc_attr( $this->options['b2c_aad_tenant']) : ''
         );
     }

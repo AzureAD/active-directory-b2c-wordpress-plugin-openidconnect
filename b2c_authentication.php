@@ -39,10 +39,14 @@ $b2c_settings = new B2C_Settings();
  * Redirects to B2C on a user login request.
  */
 function b2c_login() {
-	
-	$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$generic_policy);
-	$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint()."&state=generic";
-	wp_redirect($authorization_endpoint);
+	try {
+		$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$generic_policy);
+		$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint()."&state=generic";
+		wp_redirect($authorization_endpoint);
+	}
+	catch (Exception $e) {
+		echo $e->getMessage();
+	}
 	exit;
 }
 
@@ -50,10 +54,14 @@ function b2c_login() {
  * Redirects to B2C on user logout.
  */
 function b2c_logout() {
-	
-	$signout_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$generic_policy);
-	$signout_uri = $signout_endpoint_handler->get_end_session_endpoint();
-	wp_redirect($signout_uri);
+	try {
+		$signout_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$generic_policy);
+		$signout_uri = $signout_endpoint_handler->get_end_session_endpoint();
+		wp_redirect($signout_uri);
+	}
+	catch (Exception $e) {
+		echo $e->getMessage();
+	}
 	exit;
 }
 
@@ -63,12 +71,8 @@ function b2c_logout() {
  */
 function b2c_verify_token() {
 	
-	// If and only if ID token is POSTed to the /b2c-token-verification path, 
-	// proceeds with verifying the ID token. The path check ensures that other plugins
-	// which may POST id tokens do not conflict with this plugin.
-	$pagename = $_SERVER['REQUEST_URI'];
-	if ($pagename == B2C_PAGE_PATH && isset($_POST[B2C_RESPONSE_MODE])) {
-		
+
+	if (isset($_POST[B2C_RESPONSE_MODE])) {	
 		// Check which authorization policy was used
 		switch ($_POST['state']) {
 			case 'generic': 
@@ -80,6 +84,9 @@ function b2c_verify_token() {
 			case 'edit_profile':
 				$policy = B2C_Settings::$edit_profile_policy;
 				break;
+			default:
+				// Not a B2C request, ignore.
+				return;
 		}	
 		
 		// Verifies token only if the checkbox "Verify tokens" is checked on the settings page
@@ -147,7 +154,7 @@ function b2c_verify_token() {
 		wp_set_auth_cookie($userID);
 			
 		// Redirect to home page
-		wp_safe_redirect('/');
+		wp_safe_redirect(site_url() . '/');
 		exit;
 	}
 }
@@ -162,9 +169,14 @@ function b2c_edit_profile() {
 	if ($pagename == '/wp-admin/profile.php') {
 		
 		// Return URL for edit_profile endpoint
-		$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$edit_profile_policy);
-		$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint().'&state=edit_profile';
-		wp_redirect($authorization_endpoint);
+		try {
+			$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$edit_profile_policy);
+			$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint().'&state=edit_profile';
+			wp_redirect($authorization_endpoint);
+		}
+		catch (Exception $e) {
+			echo $e->getMessage();
+		}
 		exit;
 	}
 }

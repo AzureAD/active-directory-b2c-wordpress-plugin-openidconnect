@@ -6,22 +6,16 @@
 class B2C_Endpoint_Handler {
 	
 	private $metadata = array();
+	private $metadata_endpoint = '';
 	
 	public function __construct($policy_name) {
-		//$this->load_metadata($policy_name);
-		$this->metadata = $this->load_metadata($policy_name);
-	}
-	
-	/** 
-	 * Given a B2C policy name, constructs the metadata endpoint 
-	 * and fetches the metadata from that endpoint.
-	 */
-	public function load_metadata($policy_name) {
+		$this->metadata_endpoint = B2C_Settings::metadata_endpoint_begin() . $policy_name;
+		$response = wp_remote_get($this->metadata_endpoint);
+		$decoded_response = json_decode($response['body'], true);
+		if (count($decoded_response) == 0 )
+			throw new Exception('Unable to retrieve metadata from ' . $this->metadata_endpoint);
 		
-		$metadata_endpoint = B2C_Settings::metadata_endpoint_begin() . $policy_name;
-		$response = wp_remote_get($metadata_endpoint);
-		//$this->metadata = json_decode($response['body'], true);
-		return json_decode($response['body'], true);
+		$this->metadata = $decoded_response;
 	}
 	
 	/** 
@@ -61,11 +55,11 @@ class B2C_Endpoint_Handler {
 	 * and adds the necessary query arguments.
 	 */
 	public function get_authorization_endpoint() {
-		
+
 		$authorization_endpoint = $this->metadata['authorization_endpoint'].
 											'&response_type='.B2C_Settings::$response_type.
 											'&client_id='.B2C_Settings::$clientID.
-											'&redirect_uri='.B2C_Settings::$redirect_uri.'/b2c-token-verification'.
+											'&redirect_uri='.B2C_Settings::$redirect_uri.
 											'&response_mode='.B2C_Settings::$response_mode.
 											'&scope='.B2C_Settings::$scope;
 		return $authorization_endpoint;
