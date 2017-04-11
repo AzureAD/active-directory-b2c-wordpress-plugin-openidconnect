@@ -71,6 +71,12 @@ function b2c_logout() {
  */
 function b2c_verify_token() {
 	
+	if (isset($_POST['error'])) {
+		echo 'Unable to log in';
+		echo '<br/>error:' . $_POST['error'];
+		echo '<br/>error_description:' . $_POST['error_description'];
+		exit;
+	}
 
 	if (isset($_POST[B2C_RESPONSE_MODE])) {	
 		// Check which authorization policy was used
