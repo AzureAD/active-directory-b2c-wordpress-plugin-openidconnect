@@ -174,7 +174,9 @@ function b2c_edit_profile() {
 	
 	// Check to see if user was requesting the edit_profile page, if so redirect to B2C
 	$pagename = $_SERVER['REQUEST_URI'];
-	if ($pagename == '/wp-admin/profile.php') {
+	$parts = explode('/', $pagename);
+	$len = count($parts);
+	if ($len > 1 && $parts[$len-2] == "wp-admin" && $parts[$len-1] == "profile.php") {
 		
 		// Return URL for edit_profile endpoint
 		try {
