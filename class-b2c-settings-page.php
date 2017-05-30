@@ -121,6 +121,14 @@ class B2C_Settings_Page
             'b2c-settings-page', // Page
             'service_config_section' // Section           
         );     		
+
+        add_settings_field(
+            'b2c_GA_Grant_Admins', // ID
+            'Grant B2C Global Admins Wordpress Administrator Permissions', // Title
+            array( $this, 'b2c_GA_Grant_Admins_callback'), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section
+        );
     }
 
     /**
@@ -147,6 +155,8 @@ class B2C_Settings_Page
             $new_input['b2c_edit_profile_policy_id'] = sanitize_text_field(strtolower( $input['b2c_edit_profile_policy_id'] ));
 		
         $new_input['b2c_verify_tokens'] = $input['b2c_verify_tokens'];
+
+        $new_input['b2c_GA_Grant_Admins'] = $input['b2c_GA_Grant_Admins'];
 
         return $new_input;
     }
@@ -228,4 +238,17 @@ class B2C_Settings_Page
         
         echo '<input type="checkbox" id="b2c_verify_tokens" name="b2c_config_elements[b2c_verify_tokens]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
     }
+
+    /**
+     * Get the settings option array and print one of its values
+     */
+     public function b2c_GA_Grant_Admins_callback()
+     {
+         if(empty($this->options['b2c_GA_Grant_Admins']))
+            $this->options['b2c_GA_Grant_Admins'] = 0;
+
+            $current_value = $this->options['b2c_GA_Grant_Admins'];
+
+            echo '<input type="checkbox" id="b2c_GA_Grant_Admins" name="b2c_config_elements[b2c_GA_Grant_Admins]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
+     }
 }
