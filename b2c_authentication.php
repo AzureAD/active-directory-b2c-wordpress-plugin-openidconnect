@@ -146,7 +146,7 @@ function b2c_verify_token() {
 			if (in_array('administrator', $wp_user->roles)) {
 					
 				// If user did not authenticate with admin_policy, redirect to admin policy
-				if ($token_checker->get_claim('acr') != B2C_Settings::$admin_policy) {
+				if (mb_strtolower($token_checker->get_claim('tfp')) != mb_strtolower(B2C_Settings::$admin_policy)) {
 					$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$admin_policy);
 					$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint().'&state=admin';
 					wp_redirect($authorization_endpoint);
@@ -174,7 +174,9 @@ function b2c_edit_profile() {
 	
 	// Check to see if user was requesting the edit_profile page, if so redirect to B2C
 	$pagename = $_SERVER['REQUEST_URI'];
-	if ($pagename == '/wp-admin/profile.php') {
+	$parts = explode('/', $pagename);
+	$len = count($parts);
+	if ($len > 1 && $parts[$len-2] == "wp-admin" && $parts[$len-1] == "profile.php") {
 		
 		// Return URL for edit_profile endpoint
 		try {
