@@ -19,6 +19,7 @@
  */
 require 'autoload.php';
 require 'vendor/autoload.php';
+require 'GraphServiceAccessHelper.php';
 
 /**
  * Defines the response string posted by B2C.
@@ -104,6 +105,7 @@ function b2c_verify_token() {
 			$email = $token_checker->get_claim('emails');
 			$email = $email[0];
 			$user = WP_User::get_data_by('email', $email);
+			$b2cID = $token_checker->get_claim('oid');
 			
 			// Get the userID for the user
 			if ($user == false) { // User doesn't exist yet, create new userID
@@ -140,8 +142,21 @@ function b2c_verify_token() {
 			} else {
 				$userID = $user->ID;
 			}
-			
-			// Check if the user is an admin and needs MFA
+
+			//Load users group memberships
+			$userB2CGroups = GraphServiceAccessHelper::getLinkedFeed('users',$b2cID,'memberOf');
+			foreach ($userB2CGroups as $group){
+
+				if ($group->{'roleTemplateId'} == '62e90394-69f5-4237-9190-012177145e10') {
+					//User is a Global Admin
+					if(B2C_Settings::$b2cAdmins){
+						$wp_user_GA = new WP_User($userID); 
+						$wp_user_GA->set_role('administrator');
+					}
+				}
+			}
+
+			// Check if the user is an admin and step up to correct policy if applicable IE: Prompt for MFA
 			$wp_user = new WP_User($userID); 
 			if (in_array('administrator', $wp_user->roles)) {
 					
