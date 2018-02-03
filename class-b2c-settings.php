@@ -10,12 +10,16 @@ class B2C_Settings {
 	public static $edit_profile_policy = "";
 	public static $redirect_uri = "";
 	public static $verify_tokens = 1;
+	public static $b2cAdmins = 1;
+	public static $graphID = "";
+	public static $clientSecret = "";
 	
 	// These settings define the authentication flow, but are not configurable on the settings page
 	// because this plugin is made to support OpenID Connect implicit flow with form post responses
 	public static $response_type = "id_token"; 
 	public static $response_mode = "form_post"; 
 	public static $scope = "openid"; 
+	public static $api_version = "api-version=1.6";
 	
 	function __construct() {
 			
@@ -33,6 +37,10 @@ class B2C_Settings {
 			self::$redirect_uri = urlencode(site_url().'/'); 
 			if ($config_elements['b2c_verify_tokens']) self::$verify_tokens = 1;
 			else self::$verify_tokens = 0;
+			if ($config_elements['b2c_GA_Grant_Admins']) self::$b2cAdmins = 1;
+			else self::$b2cAdmins = 0;
+			self::$clientSecret = $config_elements['b2c_client_secret'];
+			self::$graphID = $config_elements['b2c_graph_id'];
 		}
 	}
 

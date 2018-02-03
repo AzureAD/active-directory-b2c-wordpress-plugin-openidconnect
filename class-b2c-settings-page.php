@@ -121,6 +121,30 @@ class B2C_Settings_Page
             'b2c-settings-page', // Page
             'service_config_section' // Section           
         );     		
+
+        add_settings_field(
+            'b2c_GA_Grant_Admins', // ID
+            'Grant B2C Global Admins Wordpress Administrator Role', // Title
+            array( $this, 'b2c_GA_Grant_Admins_callback'), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section
+        );
+
+		add_settings_field(
+			'b2c_client_secret', // ID
+			'Client Secret', //Title
+			 array( $this, 'b2c_client_secret_callback' ), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section  
+		);
+
+		add_settings_field(
+			'b2c_graph_id', // ID
+			'Graph API Application ID (Not B2C Application ID)', //Title
+			 array( $this, 'b2c_graph_id_callback' ), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section  
+		);
     }
 
     /**
@@ -147,6 +171,14 @@ class B2C_Settings_Page
             $new_input['b2c_edit_profile_policy_id'] = sanitize_text_field(strtolower( $input['b2c_edit_profile_policy_id'] ));
 		
         $new_input['b2c_verify_tokens'] = $input['b2c_verify_tokens'];
+
+        $new_input['b2c_GA_Grant_Admins'] = $input['b2c_GA_Grant_Admins'];
+
+		if( isset( $input['b2c_client_secret'] ) )
+            $new_input['b2c_client_secret'] = sanitize_text_field( $input['b2c_client_secret'] );
+
+		if( isset( $input['b2c_graph_id'] ) )
+            $new_input['b2c_graph_id'] = sanitize_text_field( $input['b2c_graph_id'] );
 
         return $new_input;
     }
@@ -227,5 +259,40 @@ class B2C_Settings_Page
         $current_value = $this->options['b2c_verify_tokens'];
         
         echo '<input type="checkbox" id="b2c_verify_tokens" name="b2c_config_elements[b2c_verify_tokens]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
+    }
+
+    /**
+     * Get the settings option array and print one of its values
+     */
+     public function b2c_GA_Grant_Admins_callback()
+     {
+         if(empty($this->options['b2c_GA_Grant_Admins']))
+            $this->options['b2c_GA_Grant_Admins'] = 0;
+
+            $current_value = $this->options['b2c_GA_Grant_Admins'];
+
+            echo '<input type="checkbox" id="b2c_GA_Grant_Admins" name="b2c_config_elements[b2c_GA_Grant_Admins]" value="1" class="code" ' . checked( 1, $current_value, false ) . ' />';
+     }
+
+     /** 
+     * Get the settings option array and print one of its values
+     */
+    public function b2c_graph_id_callback()
+    {
+        printf(
+            '<input type="text" id="b2c_graph_id" name="b2c_config_elements[b2c_graph_id]" value="%s" />',
+            isset( $this->options['b2c_graph_id'] ) ? esc_attr( $this->options['b2c_graph_id']) : ''
+        );
+    }
+
+	/** 
+     * Get the settings option array and print one of its values
+     */
+    public function b2c_client_secret_callback()
+    {
+        printf(
+            '<input type="password" id="b2c_client_secret" name="b2c_config_elements[b2c_client_secret]" value="%s" />',
+            isset( $this->options['b2c_client_secret'] ) ? esc_attr( $this->options['b2c_client_secret']) : ''
+        );
     }
 }
