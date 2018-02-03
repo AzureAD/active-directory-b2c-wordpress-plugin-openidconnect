@@ -7,7 +7,7 @@
  * Version: 1.0
  * Author: Microsoft
  * Author URI: https://azure.microsoft.com/en-us/documentation/services/active-directory-b2c/
- * License: TBD
+ * License: MIT License (https://raw.githubusercontent.com/AzureAD/active-directory-b2c-wordpress-plugin-openidconnect/master/LICENSE)
  */
 
  
