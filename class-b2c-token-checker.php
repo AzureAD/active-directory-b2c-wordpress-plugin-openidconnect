@@ -146,6 +146,13 @@ class B2C_Token_Checker {
 	public function get_claim($name) {
 		return $this->payload[$name];
 	}
+
+	/**
+	 * Returns the payload.
+	 */
+	public function get_payload() {
+		return $this->payload;
+	}
 }
 
 
