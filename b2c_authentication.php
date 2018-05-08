@@ -124,6 +124,9 @@ function b2c_verify_token() {
 						);
 
 				$userID = wp_insert_user( $our_userdata ); 
+
+				// Allows custom fields sent over the payload to be saved in Wordpress
+				do_action('b2c_new_userdata', $userID, $token_checker->get_payload());
 			} else if ($policy == B2C_Settings::$edit_profile_policy) { // Update the existing user w/ new attritubtes
 				
 				$first_name = $token_checker->get_claim('given_name');
@@ -137,6 +140,9 @@ function b2c_verify_token() {
 										);
 													
 				$userID = wp_update_user( $our_userdata );
+
+				// Allows custom fields sent over the payload to be updated in Wordpress
+				do_action('b2c_update_userdata', $userID, $token_checker->get_payload());
 			} else {
 				$userID = $user->ID;
 			}
