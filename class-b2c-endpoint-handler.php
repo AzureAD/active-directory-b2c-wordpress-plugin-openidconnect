@@ -62,7 +62,7 @@ class B2C_Endpoint_Handler {
 											'&redirect_uri='.B2C_Settings::$redirect_uri.
 											'&response_mode='.B2C_Settings::$response_mode.
 											'&scope='.B2C_Settings::$scope;
-		return $authorization_endpoint;
+		return apply_filters('b2c_authorization_endpoint', $authorization_endpoint);
 	}
 	
 	/** 
