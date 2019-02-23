@@ -70,6 +70,25 @@ function b2c_logout() {
 function b2c_verify_token() {
 	try {
 		if (isset($_POST['error'])) {
+			// If referer host is "login.microsoftonline.com"
+			// and path ends in "/cancelled" or "/cancelled/",
+			// ignore this error because it means the user
+			// cancelled profile editing or cancelled signing up.
+			if (isset($_SERVER['HTTP_REFERER'])) {
+				$referer = $_SERVER['HTTP_REFERER'];
+				$refererHost = parse_url($referer, PHP_URL_HOST);
+				$refererPath = parse_url($referer, PHP_URL_PATH);
+				if (isset($refererHost) && isset($refererPath)) {
+					if (preg_match('/^login\.microsoftonline\.com$/i', $refererHost)
+						&& preg_match('/\/cancelled\/?$/i', $refererPath)) {
+						// user cancelled profile editing or cancelled signing up
+						// so redirect to the home page instead of showing an error
+						wp_safe_redirect(site_url() . '/');
+						exit;
+					}
+				}
+			}
+
 			echo 'Unable to log in';
 			echo '<br/>error:' . $_POST['error'];
 			echo '<br/>error_description:' . $_POST['error_description'];
@@ -215,4 +234,3 @@ add_action('wp_loaded', 'b2c_verify_token');
  * they are redirected to B2C's logout endpoint.
  */
 add_action('wp_logout', 'b2c_logout');
-
