@@ -70,28 +70,30 @@ function b2c_logout() {
 function b2c_verify_token() {
 	try {
 		if (isset($_POST['error'])) {
-			// If referer host is "login.microsoftonline.com"
-			// and path ends in "/cancelled" or "/cancelled/",
-			// ignore this error because it means the user
-			// cancelled profile editing or cancelled signing up.
-			if (isset($_SERVER['HTTP_REFERER'])) {
-				$referer = $_SERVER['HTTP_REFERER'];
-				$refererHost = parse_url($referer, PHP_URL_HOST);
-				$refererPath = parse_url($referer, PHP_URL_PATH);
-				if (isset($refererHost) && isset($refererPath)) {
-					if (preg_match('/^login\.microsoftonline\.com$/i', $refererHost)
-						&& preg_match('/\/cancelled\/?$/i', $refererPath)) {
-						// user cancelled profile editing or cancelled signing up
-						// so redirect to the home page instead of showing an error
-						wp_safe_redirect(site_url() . '/');
-						exit;
-					}
-				}
+			// If user requests the Password Reset flow from a Sign-in/Sign-up flow, the following is returned:
+			//   Error: access_denied
+			//   Description: AADB2C90118: The user has forgotten their password.
+			if (preg_match('/.*AADB2C90118.*/i', $_POST['error_description'])) {
+				// user forgot password so redirect to the password reset flow
+				b2c_password_reset();
+				exit;
 			}
 
-			echo 'Unable to log in';
-			echo '<br/>error:' . $_POST['error'];
-			echo '<br/>error_description:' . $_POST['error_description'];
+			// If user cancels the Sign-up portion of the Sign-in/Sign-up flow or
+			// if user cancels the Profile Edit flow, the following is returned:
+			//   Error: access_denied
+			//   Description: AADB2C90091: The user has cancelled entering self-asserted information.
+			if (preg_match('/.*AADB2C90091.*/i', $_POST['error_description'])) {
+				// user cancelled profile editing or cancelled signing up
+				// so redirect to the home page instead of showing an error
+				wp_safe_redirect(site_url() . '/');
+				exit;
+			}
+
+			echo 'Authentication error on ' . get_bloginfo('name') . '.';
+			echo '<br>Error: ' . $_POST['error'];
+			echo '<br>Description: ' . $_POST['error_description'];
+			echo '<br><br><a href="' . site_url() . '">Go to ' . site_url() . '</a>';
 			exit;
 		}
 
@@ -208,6 +210,21 @@ function b2c_edit_profile() {
 		}
 		exit;
 	}
+}
+
+/**
+ * Redirects to B2C on a password reset request.
+ */
+function b2c_password_reset() {
+	try {
+		$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$password_reset_policy);
+		$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint();
+		wp_redirect($authorization_endpoint);
+	}
+	catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	exit;
 }
 
 /** 

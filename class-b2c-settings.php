@@ -8,6 +8,7 @@ class B2C_Settings {
 	public static $generic_policy = "";
 	public static $admin_policy = "";
 	public static $edit_profile_policy = "";
+	public static $password_reset_policy = "";
 	public static $redirect_uri = "";
 	public static $verify_tokens = 1;
 	
@@ -30,6 +31,7 @@ class B2C_Settings {
 			self::$generic_policy = $config_elements['b2c_subscriber_policy_id'];
 			self::$admin_policy = $config_elements['b2c_admin_policy_id'];
 			self::$edit_profile_policy = $config_elements['b2c_edit_profile_policy_id'];
+			self::$password_reset_policy = $config_elements['b2c_password_reset_policy_id'];
 			self::$redirect_uri = urlencode(site_url().'/'); 
 			if ($config_elements['b2c_verify_tokens']) self::$verify_tokens = 1;
 			else self::$verify_tokens = 0;

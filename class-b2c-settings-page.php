@@ -114,6 +114,14 @@ class B2C_Settings_Page
             'service_config_section' // Section           
         );
 		
+        add_settings_field(
+            'b2c_password_reset_policy_id', // ID
+            'Password Reset Policy', // Title 
+            array( $this, 'b2c_password_reset_policy_id_callback' ), // Callback
+            'b2c-settings-page', // Page
+            'service_config_section' // Section           
+        );
+		
 		add_settings_field(
             'b2c_verify_tokens', // ID
             'Verify ID Tokens', // Title 
@@ -145,6 +153,9 @@ class B2C_Settings_Page
 
         if( isset( $input['b2c_edit_profile_policy_id'] ) )
             $new_input['b2c_edit_profile_policy_id'] = sanitize_text_field(strtolower( $input['b2c_edit_profile_policy_id'] ));
+		
+        if( isset( $input['b2c_password_reset_policy_id'] ) )
+            $new_input['b2c_password_reset_policy_id'] = sanitize_text_field(strtolower( $input['b2c_password_reset_policy_id'] ));
 		
         $new_input['b2c_verify_tokens'] = $input['b2c_verify_tokens'];
 
@@ -188,7 +199,8 @@ class B2C_Settings_Page
     public function b2c_admin_policy_id_callback()
     {
         printf(
-            '<input type="text" id="b2c_admin_policy_id" name="b2c_config_elements[b2c_admin_policy_id]" value="%s" />',
+            '<input type="text" id="b2c_admin_policy_id" name="b2c_config_elements[b2c_admin_policy_id]" value="%s" />'
+            . '<br/><i>Can be the same as Sign-in Policy for Users but typically includes multi-factor authentication for extra protection of Wordpress administration mode.</i>',
             isset( $this->options['b2c_admin_policy_id'] ) ? esc_attr( $this->options['b2c_admin_policy_id']) : ''
         );
     }
@@ -199,7 +211,9 @@ class B2C_Settings_Page
     public function b2c_subscriber_policy_id_callback()
     {
         printf(
-            '<input type="text" id="b2c_subscriber_policy_id" name="b2c_config_elements[b2c_subscriber_policy_id]" value="%s" />',
+            '<input type="text" id="b2c_subscriber_policy_id" name="b2c_config_elements[b2c_subscriber_policy_id]" value="%s" />'
+            . '<br/><i>Specify a Sign-in Policy if you manage creation of Wordpress subscriber accounts yourself.</i>'
+            . '<br/><i>Specify a Sign-in/Sign-up policy to allow Wordpress users to create their own subscriber accounts.</i>',
             isset( $this->options['b2c_subscriber_policy_id'] ) ? esc_attr( $this->options['b2c_subscriber_policy_id']) : ''
         );
     }
@@ -212,6 +226,18 @@ class B2C_Settings_Page
         printf(
             '<input type="text" id="b2c_edit_profile_policy_id" name="b2c_config_elements[b2c_edit_profile_policy_id]" value="%s" />',
             isset( $this->options['b2c_edit_profile_policy_id'] ) ? esc_attr( $this->options['b2c_edit_profile_policy_id']) : ''
+        );
+    }
+	
+    /** 
+     * Get the settings option array and print one of its values
+     */
+    public function b2c_password_reset_policy_id_callback()
+    {
+        printf(
+            '<input type="text" id="b2c_password_reset_policy_id" name="b2c_config_elements[b2c_password_reset_policy_id]" value="%s" />'
+            . '<br/><i>Used if your Sign-in Policy for Users is using a sign-in/sign-up policy and the user clicks the forgotten password link.</i>',
+            isset( $this->options['b2c_password_reset_policy_id'] ) ? esc_attr( $this->options['b2c_password_reset_policy_id']) : ''
         );
     }
 	
