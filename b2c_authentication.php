@@ -129,6 +129,7 @@ function b2c_verify_token() {
 			// Get the userID for the user
 			if ($user == false) { // User doesn't exist yet, create new userID
 				
+				$name = $token_checker->get_claim('name');
 				$first_name = $token_checker->get_claim('given_name');
 				$last_name = $token_checker->get_claim('family_name');
 
@@ -139,7 +140,7 @@ function b2c_verify_token() {
 						'user_registered' => true,
 						'user_status' => 0,
 						'user_email' => $email,
-						'display_name' => $first_name . ' ' . $last_name,
+						'display_name' => $name,
 						'first_name' => $first_name,
 						'last_name' => $last_name
 						);
@@ -147,12 +148,13 @@ function b2c_verify_token() {
 				$userID = wp_insert_user( $our_userdata ); 
 			} else if ($policy == B2C_Settings::$edit_profile_policy) { // Update the existing user w/ new attritubtes
 				
+				$name = $token_checker->get_claim('name');
 				$first_name = $token_checker->get_claim('given_name');
 				$last_name = $token_checker->get_claim('family_name');
 				
 				$our_userdata = array (
 										'ID' => $user->ID,
-										'display_name' => $first_name . ' ' . $last_name,
+										'display_name' => $name,
 										'first_name' => $first_name,
 										'last_name' => $last_name
 										);
@@ -218,7 +220,7 @@ function b2c_edit_profile() {
 function b2c_password_reset() {
 	try {
 		$b2c_endpoint_handler = new B2C_Endpoint_Handler(B2C_Settings::$password_reset_policy);
-		$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint();
+		$authorization_endpoint = $b2c_endpoint_handler->get_authorization_endpoint().'&state=password_reset';
 		wp_redirect($authorization_endpoint);
 	}
 	catch (Exception $e) {
@@ -232,6 +234,14 @@ function b2c_password_reset() {
  * to B2C's authorization endpoint. 
  */
 add_action('wp_authenticate', 'b2c_login');
+
+/** 
+ * Hooks onto the WP lost password action, so user is redirected
+ * to B2C's password reset endpoint. 
+ * 
+ * example.com/wp-login.php?action=lostpassword
+ */
+add_action('login_form_lostpassword', 'b2c_password_reset');
 
 /**
  * Hooks onto the WP page load action, so when user request to edit their profile, 
