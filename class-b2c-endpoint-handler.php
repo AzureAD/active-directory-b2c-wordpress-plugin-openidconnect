@@ -12,7 +12,7 @@ class B2C_Endpoint_Handler {
 		$this->metadata_endpoint = B2C_Settings::metadata_endpoint_begin() . $policy_name;
 		$response = wp_remote_get($this->metadata_endpoint);
 		$decoded_response = json_decode($response['body'], true);
-		if (count($decoded_response) == 0 )
+		if (isset($decoded_response) || empty($decoded_response))
 			throw new Exception('Unable to retrieve metadata from ' . $this->metadata_endpoint);
 		
 		$this->metadata = $decoded_response;
